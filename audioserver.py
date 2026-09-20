@@ -1,6 +1,10 @@
 import asyncio
 import websockets 
 
+# start requirements
+# gh codespace ports forward 8765:8765
+# gh codespace ports visibility 8765:public
+
 async def test(websocket) :
   print("ww")
   w = await websocket.recv()
@@ -13,8 +17,9 @@ async def test(websocket) :
 async def main():
  async with websockets.serve(test, "localhost",
 port = 8765, origins = [
-"http://localhost:6080"
-"wss://literate-yodel-qv4q9r94x9gg2xx4w-6080.app.github.dev"
+"http://localhost:6080",
+"https://orange-rotary-phone-4qv7g4gvrwpp3555r-6080.app.github.dev",
+"https://orange-rotary-phone-4qv7g4gvrwpp3555r-6080.app.github.dev/vnc_auto.html",
 ]):
   await asyncio.Future()
 

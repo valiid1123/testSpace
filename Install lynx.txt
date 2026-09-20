@@ -1,6 +1,10 @@
 sudo apt-get install lynx
 chmod +x start-gui.sh
 ./start-gui.sh
+chmod +x basicset.sh
+./basicset.sh
+
+
 sudo apt-get install terminator falkon thunar synaptic - y
 sudo dpkg --add-architecture i386
 sudo apt install wine winetricks -y

@@ -1,7 +1,9 @@
 import asyncio 
 import websockets
 import pyaudio
-
+# install pyaudio
+# sudo apt-get install portaudio19-dev
+# pip install pyaudio
 async def sendMessage():
  uri = "ws://localhost:8765"
  async with websockets.connect(uri) as websocket :
