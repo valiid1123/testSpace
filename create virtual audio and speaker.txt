@@ -1,0 +1,4 @@
+# create a virtual speaker in pulse audio
+pactl load-module module-null-sink sink_name=Virtual-Speaker sink_properties=device.description=Virtual-Speaker
+# crete a virtual microphone in pulse audio
+pactl load-module module-remap-source source_name=Remap-Source master=Virtual-Speaker.monitor
