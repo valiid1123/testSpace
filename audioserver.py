@@ -1,17 +1,18 @@
 import asyncio
 import websockets 
 import pyaudio
-
-# start requirements
-# gh codespace ports forward 8765:8765
-# gh codespace ports visibility 8765:public
-
+import wave 
+"""
+ start requirements
+ gh codespace ports forward 8765:8765
+ gh codespace ports visibility 8765:public
+"""
 
 Chunk = 1024
 Format = pyaudio.paInt16
 Channel = 1 
 Rate = 44100
-Duration = 1/2
+Duration = 10
 
 p = pyaudio.PyAudio()
 stream = p.open(format = Format, 
@@ -23,16 +24,33 @@ frames = []
 for i in range(0, int(Rate/Chunk * Duration)):
  data = stream.read(Chunk)
  frames.append(data)
-frames = b''.join(frames)
-print("recorded audio")
 
+stream.stop_stream()
+stream.close()
+p.terminate()
+
+w = wave.open("e.wav", "wb")
+w.setnchannels(Channel)
+w.setsampwidth(p.get_sample_size(Format))
+w.setframerate(Rate)
+w.writeframes(b''.join(frames))
+w.close()
+
+a = wave.open('e.wav', 'rb')
+f = a.readframes(Chunk)
+print(f)
+
+
+
+print("recorded audio")
 async def test(websocket) :
   
   w = await websocket.recv()
   print(f'this is {w}')
   resback = 'got the message'
-  
-  await websocket.send(frames, text=True)
+  #print(frames)
+
+  await websocket.send(f)
   print('sending back data')
   
 

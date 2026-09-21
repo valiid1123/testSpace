@@ -1,6 +1,7 @@
 import asyncio 
 import websockets
 import pyaudio
+import wave
 # install pyaudio
 # sudo apt-get install portaudio19-dev
 # pip install pyaudio
@@ -22,7 +23,16 @@ for i in range(0, int(Rate/Chunk * Duration)):
  data = stream.read(Chunk)
  frames.append(data)
 
-print(frames, len(frames))
+w = wave.open("e.wav", "wb")
+w.setnchannels(Channel)
+w.setsampwidth(p.get_sample_size(Format))
+w.setframerate(Rate)
+w.writeframes(b''.join(frames))
+w.close()
+
+a = wave.open('e.wav', 'rb')
+f = a.readframes(Chunk)
+print(f)
 
 """
 async def sendMessage():
