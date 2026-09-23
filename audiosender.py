@@ -2,6 +2,9 @@ import asyncio
 import websockets
 import pyaudio
 import wave
+import os 
+import numpy
+
 # install pyaudio
 # sudo apt-get install portaudio19-dev
 # pip install pyaudio
@@ -10,7 +13,7 @@ Chunk = 1024
 Format = pyaudio.paInt16
 Channel = 1 
 Rate = 44100
-Duration = 1/2
+Duration = 2
 
 p = pyaudio.PyAudio()
 stream = p.open(format = Format, 
@@ -30,10 +33,12 @@ w.setframerate(Rate)
 w.writeframes(b''.join(frames))
 w.close()
 
-a = wave.open('e.wav', 'rb')
-f = a.readframes(Chunk)
-print(f)
+a = open('e.wav', 'rb')
+f = a.read()
+f = numpy.frombuffer(f, dtype ='int16')
+f = f.tolist()
 
+print(f)
 """
 async def sendMessage():
  uri = "ws://localhost:8765"

@@ -2,6 +2,9 @@ import asyncio
 import websockets 
 import pyaudio
 import wave 
+import json 
+import numpy 
+from base64 import b64encode, b64decode
 """
  start requirements
  gh codespace ports forward 8765:8765
@@ -10,13 +13,13 @@ import wave
 
 Chunk = 1024
 Format = pyaudio.paInt16
-Channel = 1 
+Channels = 2
 Rate = 44100
-Duration = 10
+Duration = 2
 
 p = pyaudio.PyAudio()
 stream = p.open(format = Format, 
-                channels = 1,
+                channels = Channels,
 				rate = Rate,
 				input = True,
 				frames_per_buffer = Chunk)
@@ -29,18 +32,32 @@ stream.stop_stream()
 stream.close()
 p.terminate()
 
-w = wave.open("e.wav", "wb")
-w.setnchannels(Channel)
-w.setsampwidth(p.get_sample_size(Format))
-w.setframerate(Rate)
-w.writeframes(b''.join(frames))
-w.close()
+SoundCounter = 0
+# create/pick wave file name and return the relative path
+# folder name pickSound must be create in the same play as were the server is running 
+SoundPicker = SoundCounter % 2
+SoundFileType = ['a', 'b']
+SoundName = SoundFileType[SoundPicker]
+SoundPath = "./pickSound"+"sound"+SoundName
+if (SoundCounter >= 2): 
+ SoundCounter = 0
 
-a = wave.open('e.wav', 'rb')
-f = a.readframes(Chunk)
-print(f)
+waveFile = wave.open(SoundPath, "wb")
+waveFile.setnchannels(Channels)
+waveFile.setsampwidth(p.get_sample_size(Format))
+waveFile.setframerate(Rate)
+waveFile.writeframes(b''.join(frames))
+waveFile.close()
 
+frame = []
 
+file = open(SoundPath, 'rb')
+waveData = file.read()
+waveData = numpy.frombuffer(waveData, dtype ='int16')
+waveData = waveData.tolist()
+file.close()
+SoundCounter += 1
+print(waveData)
 
 print("recorded audio")
 async def test(websocket) :
@@ -48,9 +65,9 @@ async def test(websocket) :
   w = await websocket.recv()
   print(f'this is {w}')
   resback = 'got the message'
-  #print(frames)
-
-  await websocket.send(f)
+  
+  package = {"type" : 'audio/wav', "data": waveData}
+  await websocket.send(json.dumps(package))
   print('sending back data')
   
 
